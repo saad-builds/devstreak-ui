@@ -2,6 +2,20 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import html2canvas from 'html2canvas';
 import toast from 'react-hot-toast';
+import { 
+  FiZap, 
+  FiCheckCircle, 
+  FiClock, 
+  FiDownload, 
+  FiCode, 
+  FiBookOpen, 
+  FiEdit3, 
+  FiList, 
+  FiSettings, 
+  FiAward, 
+  FiArrowRight, 
+  FiSmile 
+} from 'react-icons/fi';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import Heatmap from '../components/dashboard/Heatmap';
@@ -25,7 +39,12 @@ function HoursCountdown() {
     const t = setInterval(() => setTime(getHoursLeft()), 60000);
     return () => clearInterval(t);
   }, []);
-  return <span>{time.h}h {time.m}m left today</span>;
+  return (
+    <span className="inline-flex items-center gap-1.5 text-gray-400 text-xs font-medium bg-gray-950 border border-gray-800 px-3 py-1 rounded-full">
+      <FiClock className="text-orange-400" size={13} />
+      <span>{time.h}h {time.m}m left today</span>
+    </span>
+  );
 }
 
 function LiveCounter({ count }) {
@@ -83,6 +102,22 @@ export default function Dashboard() {
   const recentLog = logs[0] || null;
   const streak = user?.currentStreak || 0;
 
+  // Calculate monthly & weekly log stats dynamically
+  const now = new Date();
+  const logsThisMonth = logs.filter((log) => {
+    const logDate = new Date(log.createdAt || log.date);
+    return (
+      logDate.getMonth() === now.getMonth() &&
+      logDate.getFullYear() === now.getFullYear()
+    );
+  }).length;
+
+  const logsThisWeek = logs.filter((log) => {
+    const logDate = new Date(log.createdAt || log.date);
+    const diffDays = (now - logDate) / (1000 * 60 * 60 * 24);
+    return diffDays >= 0 && diffDays <= 7;
+  }).length;
+
   const handleDownloadCard = async () => {
     if (!cardRef.current) return;
     setExporting(true);
@@ -109,7 +144,9 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <span className="flame-emoji text-6xl">🔥</span>
+        <div className="w-16 h-16 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 animate-bounce">
+          <FiZap size={32} />
+        </div>
       </div>
     );
   }
@@ -123,146 +160,188 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950">
+    <div className="min-h-screen bg-gray-950 text-white">
       <Navbar />
 
       {/* ── HERO ── */}
-      <div className="relative overflow-hidden border-b border-gray-900">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] rounded-full blur-3xl opacity-20 ${
-            loggedToday ? 'bg-green-500' : 'bg-orange-500'
-          }`} />
+      <div className="relative overflow-hidden border-b border-orange-500/15 bg-gradient-to-b from-gray-950 via-gray-950 to-gray-900/60 py-12 lg:py-16">
+        {/* Ambient fire aura glow */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div
+            className={`absolute top-1/2 left-1/3 -translate-y-1/2 -translate-x-1/2 w-[600px] h-[350px] rounded-full blur-3xl transition-all duration-700 ${
+              loggedToday ? 'bg-emerald-500/15' : 'bg-orange-500/20'
+            }`}
+          />
         </div>
 
-        <div className="relative max-w-6xl mx-auto px-8 py-14 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-8">
+        <div className="relative max-w-7xl mx-auto px-6 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-8">
 
-          {/* Left: streak number */}
-          <div className="flex items-end gap-6">
-            <span className="flame-emoji leading-none" style={{ fontSize: 80 }}>🔥</span>
-            <div>
-              <div
-                className="font-black leading-none shimmer-text"
-                style={{ fontSize: 160, fontFamily: 'Inter, sans-serif', lineHeight: 0.9 }}
-              >
-                {streak}
+          {/* Left: Flame badge & streak number */}
+          <div className="flex items-center gap-6 sm:gap-8">
+            <div className="relative shrink-0">
+              <div className="absolute -inset-2 rounded-3xl bg-gradient-to-t from-orange-600 via-amber-500 to-amber-300 opacity-30 blur-lg animate-pulse" />
+              <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-gray-900/90 border border-orange-500/30 flex items-center justify-center shadow-2xl backdrop-blur-md">
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
+                  <svg
+                    className="absolute inset-0 w-full h-full text-orange-500 drop-shadow-[0_0_18px_rgba(249,115,22,0.85)] animate-pulse"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M12 2C10.2 4.8 9.5 7.5 10.5 10C8.5 9 7.5 7.2 7.5 5C5 8.2 3.5 11.8 3.5 15.2C3.5 19.8 7.3 23.5 12 23.5C16.7 23.5 20.5 19.8 20.5 15.2C20.5 10.5 16.2 6.2 12 2Z" />
+                  </svg>
+                  <svg
+                    className="relative w-8 h-8 sm:w-10 sm:h-10 text-amber-300 drop-shadow-[0_0_8px_rgba(252,211,77,0.9)]"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M12 10.5C11 12.2 10.5 13.8 11 15.2C10 14.8 9.5 13.8 9.5 12.8C8 14.8 7.5 16.5 8 18.2C8.6 20.2 10.1 21.2 12 21.2C13.9 21.2 15.4 20.2 16 18.2C16.8 15.5 14.5 12.8 12 10.5Z" />
+                  </svg>
+                </div>
               </div>
-              <div className="flex items-center gap-3 mt-3">
-                <span className="text-gray-400 text-xl font-medium">
-                  {streak === 0
-                    ? 'Start today'
-                    : streak === 1
-                    ? 'Day 1. The journey begins.'
-                    : `Day ${streak}. Keep going.`}
+            </div>
+
+            <div>
+              <div className="flex items-baseline gap-3">
+                <span className="font-extrabold text-6xl sm:text-7xl lg:text-8xl leading-none tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white via-orange-50 to-orange-400 drop-shadow-[0_6px_24px_rgba(249,115,22,0.35)]">
+                  {streak}
                 </span>
-                <span className="text-xs font-bold text-orange-400 bg-orange-400/10 border border-orange-400/20 px-2.5 py-1 rounded-full">
-                  {getRankLabel(streak)}
+                <span className="text-orange-400 font-extrabold text-2xl sm:text-3xl tracking-widest uppercase">
+                  {streak === 1 ? 'DAY' : 'DAYS'}
+                </span>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 mt-1">
+                <span className="text-gray-200 text-lg sm:text-xl font-bold tracking-wide">
+                  {streak === 0
+                    ? 'Ignite your streak today'
+                    : streak === 1
+                    ? 'Day 1 on fire! Keep burning.'
+                    : `Day ${streak}. Unstoppable energy.`}
+                </span>
+                <span className="text-xs font-bold text-amber-300 bg-orange-500/20 border border-orange-500/40 px-3.5 py-1.5 rounded-full uppercase tracking-wider shadow-[0_0_12px_rgba(249,115,22,0.25)]">
+                  🔥 {getRankLabel(streak)}
                 </span>
               </div>
             </div>
           </div>
 
           {/* Right: action + mini stats */}
-          <div className="flex flex-col items-center lg:items-end gap-4 pb-2">
+          <div className="flex flex-col items-center lg:items-end gap-5 w-full lg:w-auto">
             {loggedToday ? (
-              <div className="flex items-center gap-2 bg-green-900/30 border border-green-800/50 text-green-400 font-semibold px-5 py-3 rounded-xl text-sm">
-                ✅ Streak safe — you showed up today
+              <div className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold px-6 py-3.5 rounded-2xl text-sm shadow-sm">
+                <FiCheckCircle size={18} />
+                <span>Streak safe today</span>
               </div>
             ) : (
               <Link
                 to="/checkin"
-                className="bg-orange-500 hover:bg-orange-400 text-white font-bold px-8 py-4 rounded-xl text-lg transition-all hover:scale-105 active:scale-95 shadow-xl shadow-orange-500/30"
+                className="relative group w-full sm:w-auto text-center"
               >
-                🔥 Accept Today's Challenge
+                <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-400 opacity-60 blur-md group-hover:opacity-100 transition duration-300" />
+                <div className="relative inline-flex items-center justify-center gap-3 w-full bg-gradient-to-r from-orange-500 via-amber-500 to-orange-500 hover:brightness-110 text-white font-extrabold px-9 py-4 rounded-2xl text-base transition-all duration-300 group-hover:scale-[1.02] active:scale-95 shadow-xl uppercase tracking-wider">
+                  <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+                    <path d="M12 2C10.2 4.8 9.5 7.5 10.5 10C8.5 9 7.5 7.2 7.5 5C5 8.2 3.5 11.8 3.5 15.2C3.5 19.8 7.3 23.5 12 23.5C16.7 23.5 20.5 19.8 20.5 15.2C20.5 10.5 16.2 6.2 12 2Z" />
+                  </svg>
+                  <span>Accept Today's Challenge</span>
+                </div>
               </Link>
             )}
 
-            <div className="flex items-center gap-6 text-sm">
+            {/* Mini Stats Card */}
+            <div className="w-full sm:w-auto flex items-center justify-around gap-6 text-sm bg-gray-900/80 border border-gray-800 px-6 py-3.5 rounded-2xl shadow-xl backdrop-blur-md">
               <div className="text-center">
-                <p className="text-white font-bold text-lg tabular-nums">{user?.longestStreak || 0}</p>
-                <p className="text-gray-600 text-xs">best streak</p>
+                <p className="text-white font-extrabold text-xl tabular-nums">{user?.longestStreak || 0}</p>
+                <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider">best streak</p>
               </div>
               <div className="w-px h-8 bg-gray-800" />
               <div className="text-center">
-                <p className="text-orange-400 font-bold text-lg tabular-nums">
+                <p className="text-orange-400 font-extrabold text-xl tabular-nums drop-shadow-[0_0_8px_rgba(249,115,22,0.4)]">
                   <LiveCounter count={totalToday} />
                 </p>
-                <p className="text-gray-600 text-xs">logged today</p>
+                <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider">logged today</p>
               </div>
               <div className="w-px h-8 bg-gray-800" />
               <div className="text-center">
-                <p className={`font-bold text-lg ${user?.freezeAvailable ? 'text-blue-400' : 'text-gray-600'}`}>
-                  {user?.freezeAvailable ? '🧊' : '—'}
+                <p className={`font-extrabold text-xl ${user?.freezeAvailable ? 'text-blue-400' : 'text-gray-600'}`}>
+                  {user?.freezeAvailable ? '🧊' : 'NONE'}
                 </p>
-                <p className="text-gray-600 text-xs">
+                <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider">
                   {user?.freezeAvailable ? 'freeze ready' : 'no freeze'}
                 </p>
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
       {/* ── BODY ── */}
-      <div className="max-w-6xl mx-auto px-8 py-10">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
 
           {/* LEFT COLUMN — 3/5 */}
           <div className="lg:col-span-3 space-y-6">
 
             {/* Mission card */}
             {!loggedToday && todayStatus?.prompt && (
-              <div className="rounded-2xl border border-orange-900/40 bg-gray-900 p-6"
-                style={{ boxShadow: 'inset 0 1px 0 rgba(249,115,22,0.1)' }}>
+              <div className="rounded-3xl border border-orange-500/30 bg-gradient-to-br from-orange-500/10 via-gray-900 to-gray-900 p-7 relative overflow-hidden shadow-xl">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-orange-400 animate-pulse" />
                     <span className="text-orange-400 text-xs font-bold uppercase tracking-widest">
                       Today's Mission
                     </span>
                   </div>
-                  <span className="text-gray-600 text-xs">
-                    <HoursCountdown />
-                  </span>
+                  <HoursCountdown />
                 </div>
-                <p className="text-white text-lg font-semibold leading-relaxed mb-5">
+                <p className="text-white text-xl font-bold leading-relaxed mb-6">
                   {todayStatus.prompt.text}
                 </p>
                 <Link
                   to="/checkin"
-                  className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-400 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-all hover:scale-105 active:scale-95"
+                  className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-400 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all duration-300 hover:scale-105 active:scale-95 shadow-md shadow-orange-500/20"
                 >
-                  Start writing →
+                  <span>Start writing</span>
+                  <FiArrowRight size={16} />
                 </Link>
               </div>
             )}
 
             {/* Today's entry */}
             {loggedToday && recentLog && (
-              <div className="rounded-2xl border border-gray-800 bg-gray-900 p-6">
-                <div className="flex items-center justify-between mb-5">
+              <div className="rounded-3xl border border-gray-800 bg-gray-900/80 p-7 shadow-xl">
+                <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-800">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-green-500" />
-                    <span className="text-green-400 text-xs font-bold uppercase tracking-widest">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+                    <span className="text-emerald-400 text-xs font-bold uppercase tracking-widest">
                       Today's Entry
                     </span>
                   </div>
-                  <Link to="/checkin" className="text-gray-600 hover:text-gray-400 text-xs transition-colors">
-                    Edit →
+                  <Link to="/checkin" className="inline-flex items-center gap-1.5 text-gray-400 hover:text-white text-xs font-medium transition-colors">
+                    <FiEdit3 size={13} />
+                    <span>Edit</span>
                   </Link>
                 </div>
                 <div className="space-y-5">
                   <div>
-                    <p className="text-gray-600 text-xs uppercase tracking-widest mb-2">Worked on</p>
-                    <p className="text-gray-200 text-sm leading-relaxed">{recentLog.workedOn}</p>
+                    <div className="flex items-center gap-2 text-xs font-semibold text-orange-400 uppercase tracking-wider mb-2">
+                      <FiCode size={14} />
+                      <span>Worked on</span>
+                    </div>
+                    <p className="text-gray-200 text-base leading-relaxed font-medium">{recentLog.workedOn}</p>
                   </div>
-                  <div className="border-t border-gray-800 pt-5">
-                    <p className="text-gray-600 text-xs uppercase tracking-widest mb-2">Learned</p>
-                    <p className="text-gray-200 text-sm leading-relaxed">{recentLog.learned}</p>
+                  <div className="border-t border-gray-800/80 pt-5">
+                    <div className="flex items-center gap-2 text-xs font-semibold text-orange-400 uppercase tracking-wider mb-2">
+                      <FiBookOpen size={14} />
+                      <span>Learned</span>
+                    </div>
+                    <p className="text-gray-200 text-base leading-relaxed font-medium">{recentLog.learned}</p>
                   </div>
                   {recentLog.sessionRating && (
-                    <div className="border-t border-gray-800 pt-4 flex items-center gap-2">
-                      <span className="text-gray-600 text-xs">Session: </span>
-                      <span className="text-lg">
+                    <div className="border-t border-gray-800/80 pt-4 flex items-center gap-2">
+                      <FiSmile className="text-gray-500" size={16} />
+                      <span className="text-gray-400 text-xs font-medium">Session Mood: </span>
+                      <span className="text-xl">
                         {['', '😞', '😐', '🙂', '😊', '🔥'][recentLog.sessionRating]}
                       </span>
                     </div>
@@ -272,28 +351,29 @@ export default function Dashboard() {
             )}
 
             {/* Activity heatmap */}
-            <div className="rounded-2xl border border-gray-800 bg-gray-900 p-6">
+            <div className="rounded-3xl border border-gray-800 bg-gray-900/80 p-7 shadow-xl">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-white font-bold text-base">Activity</h2>
-                <Link to="/history" className="text-orange-400 text-xs hover:text-orange-300 transition-colors">
-                  View history →
+                <h2 className="text-white font-bold text-lg">Activity Heatmap</h2>
+                <Link to="/history" className="inline-flex items-center gap-1 text-orange-400 text-xs font-semibold hover:text-orange-300 transition-colors">
+                  <span>View history</span>
+                  <FiArrowRight size={14} />
                 </Link>
               </div>
               <Heatmap logs={logs} />
             </div>
 
-            {/* Stats */}
-            <div className="rounded-2xl border border-gray-800 bg-gray-900 p-6">
-              <h2 className="text-white font-bold text-base mb-4">Your Stats</h2>
+            {/* Consistency Stats (Refreshed and non-redundant) */}
+            <div className="rounded-3xl border border-gray-800 bg-gray-900/80 p-7 shadow-xl">
+              <h2 className="text-white font-bold text-lg mb-5">Your Consistency Stats</h2>
               <div className="grid grid-cols-3 gap-4">
                 {[
                   { label: 'Total Logs', value: logs.length },
-                  { label: 'Current Streak', value: `${streak}d` },
-                  { label: 'Best Streak', value: `${user?.longestStreak || 0}d` },
+                  { label: 'This Week', value: logsThisWeek },
+                  { label: 'This Month', value: logsThisMonth },
                 ].map(({ label, value }) => (
-                  <div key={label} className="bg-gray-800/60 rounded-xl p-4 text-center">
-                    <p className="text-white font-black text-2xl tabular-nums">{value}</p>
-                    <p className="text-gray-500 text-xs mt-1">{label}</p>
+                  <div key={label} className="bg-gray-950/80 border border-gray-800/80 rounded-2xl p-5 text-center">
+                    <p className="text-white font-black text-3xl tabular-nums">{value}</p>
+                    <p className="text-gray-400 text-xs mt-1 font-medium">{label}</p>
                   </div>
                 ))}
               </div>
@@ -304,43 +384,58 @@ export default function Dashboard() {
           <div className="lg:col-span-2 space-y-6">
 
             {/* Achievement card */}
-            <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-              <div className="mb-4">
-                <h2 className="text-white font-bold text-base">Achievement Card</h2>
-                <p className="text-gray-600 text-xs mt-0.5">Share on LinkedIn or WhatsApp</p>
+            <div className="rounded-3xl border border-gray-800 bg-gray-900/80 p-6 shadow-xl">
+              <div className="mb-5 flex items-center justify-between">
+                <div>
+                  <h2 className="text-white font-bold text-lg flex items-center gap-2">
+                    <FiAward className="text-orange-400" size={20} />
+                    <span>Achievement Card</span>
+                  </h2>
+                  <p className="text-gray-400 text-xs mt-1">Share your daily win on socials</p>
+                </div>
               </div>
-              <div className="mb-4">
+              {/* Natural card preview container without restricting borders or hidden overflow */}
+              <div className="mb-5">
                 <StreakCard ref={cardRef} user={user} logs={logs} recentLog={recentLog} />
               </div>
               <button
                 onClick={handleDownloadCard}
                 disabled={exporting}
-                className="w-full bg-orange-500 hover:bg-orange-400 disabled:opacity-40 text-white font-bold py-3 rounded-xl transition-all text-sm"
+                className="w-full inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-400 disabled:opacity-40 text-white font-bold py-3.5 rounded-2xl transition-all duration-300 text-sm shadow-md shadow-orange-500/20"
               >
-                {exporting ? 'Generating...' : '🏆 Download Card'}
+                <FiDownload size={16} />
+                <span>{exporting ? 'Generating...' : 'Download Share Card'}</span>
               </button>
             </div>
 
             {/* Quick actions */}
-            <div className="rounded-2xl border border-gray-800 bg-gray-900 p-5">
-              <h2 className="text-white font-bold text-base mb-4">Quick Actions</h2>
-              <div className="space-y-2">
+            <div className="rounded-3xl border border-gray-800 bg-gray-900/80 p-6 shadow-xl">
+              <h2 className="text-white font-bold text-lg mb-4">Quick Actions</h2>
+              <div className="space-y-3">
                 {[
-                  { to: '/checkin', label: loggedToday ? '✏️ Edit today\'s log' : '🔥 Log today', highlight: !loggedToday },
-                  { to: '/history', label: '📓 View all logs', highlight: false },
-                  { to: '/profile', label: '⚙️ Edit profile', highlight: false },
-                ].map(({ to, label, highlight }) => (
+                  { 
+                    to: '/checkin', 
+                    label: loggedToday ? 'Edit today\'s log' : 'Log today\'s entry', 
+                    icon: loggedToday ? FiEdit3 : FiZap,
+                    highlight: !loggedToday 
+                  },
+                  { to: '/history', label: 'View all logs', icon: FiList, highlight: false },
+                  { to: '/profile', label: 'Edit profile', icon: FiSettings, highlight: false },
+                ].map(({ to, label, icon: IconComponent, highlight }) => (
                   <Link
                     key={to}
                     to={to}
-                    className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                    className={`flex items-center justify-between px-5 py-3.5 rounded-2xl text-sm font-semibold transition-all duration-300 ${
                       highlight
-                        ? 'bg-orange-500/10 border border-orange-500/20 text-orange-400 hover:bg-orange-500/20'
-                        : 'bg-gray-800/50 text-gray-400 hover:bg-gray-800 hover:text-white'
+                        ? 'bg-orange-500/10 border border-orange-500/30 text-orange-400 hover:bg-orange-500/20'
+                        : 'bg-gray-950/80 border border-gray-800/80 text-gray-300 hover:border-gray-700 hover:text-white'
                     }`}
                   >
-                    {label}
-                    <span className="text-xs opacity-50">→</span>
+                    <div className="flex items-center gap-3">
+                      <IconComponent size={16} className={highlight ? 'text-orange-400' : 'text-gray-400'} />
+                      <span>{label}</span>
+                    </div>
+                    <FiArrowRight size={14} className="opacity-50" />
                   </Link>
                 ))}
               </div>
