@@ -1,4 +1,4 @@
-import Navbar from "../components/layout/Navbar";
+import Navbar from "../components/landing/Navbar";
 import Hero from "../components/landing/Hero";
 import WhySection from "../components/landing/WhySection";
 import HowItWorks from "../components/landing/HowItWorks";

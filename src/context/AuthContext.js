@@ -1,5 +1,8 @@
+/* global chrome */
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import api from '../utils/api';
+
+const EXTENSION_ID = "pblljelmjikhiiafpldhciighgnjaddm";
 
 const AuthContext = createContext(null);
 
@@ -26,12 +29,30 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('token', token);
     localStorage.setItem('refreshToken', refreshToken);
     setUser(userData);
+
+    // Notify extension
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+      chrome.runtime.sendMessage(EXTENSION_ID, { type: 'SET_TOKEN', token }, () => {
+        if (chrome.runtime.lastError) {
+          // Ignore if extension is inactive
+        }
+      });
+    }
   }, []);
 
   const logout = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     setUser(null);
+
+    // Notify extension on logout
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+      chrome.runtime.sendMessage(EXTENSION_ID, { type: 'LOGOUT' }, () => {
+        if (chrome.runtime.lastError) {
+          // Ignore if extension is inactive
+        }
+      });
+    }
   }, []);
 
   const updateUser = useCallback((userData) => setUser(userData), []);

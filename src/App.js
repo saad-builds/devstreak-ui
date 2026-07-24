@@ -1,9 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/layout/ProtectedRoute';
-import Welcome from './pages/welcome';
 
+import Welcome from './pages/welcome';
 import Landing from './pages/Landing';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
@@ -12,10 +13,33 @@ import CheckIn from './pages/CheckIn';
 import History from './pages/History';
 import Profile from './pages/Profile';
 
+// Helper component to update document title dynamically based on current route
+function TitleUpdater() {
+  const location = useLocation();
+
+  useEffect(() => {
+    const titles = {
+      '/': 'DevStreak | Track Daily Developer Streaks',
+      '/login': 'Log In | DevStreak',
+      '/signup': 'Sign Up | DevStreak',
+      '/dashboard': 'Dashboard | DevStreak',
+      '/checkin': 'Daily Check-In | DevStreak',
+      '/history': 'Streak History | DevStreak',
+      '/profile': 'Your Profile | DevStreak',
+      '/welcome': 'Welcome | DevStreak',
+    };
+
+    document.title = titles[location.pathname] || 'DevStreak | Developer Habit Tracker';
+  }, [location]);
+
+  return null;
+}
+
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <TitleUpdater />
         <Toaster
           position="top-center"
           toastOptions={{

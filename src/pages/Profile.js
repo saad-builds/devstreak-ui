@@ -2,7 +2,7 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext';
-import Navbar from '../components/layout/Navbar';
+import Navbar from '../components/landing/Navbar';
 
 const DOMAINS = [
   'MERN Stack Developer', 'Frontend Developer', 'Backend Developer',
