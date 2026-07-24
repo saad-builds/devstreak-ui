@@ -263,28 +263,35 @@ export default function Dashboard() {
                 <p className="text-white font-extrabold text-lg sm:text-xl tabular-nums">
                   {user?.longestStreak || 0}
                 </p>
-                <p className="text-gray-400 text-[10px] sm:text-xs font-semibold capitalize tracking-wider">
-                  best streak
+                <p className="text-gray-400 text-[10px] sm:text-xs font-semibold  tracking-wider">
+                  Best Streak
                 </p>
               </div>
+
               <div className="w-px h-7 sm:h-8 bg-gray-800 shrink-0" />
+
+              {/* Next Goal — Styled to match adjacent items */}
               <div className="text-center px-1">
-                <p className="text-orange-400 font-extrabold text-lg sm:text-xl tabular-nums drop-shadow-[0_0_8px_rgba(249,115,22,0.4)]">
-                  <LiveCounter count={totalToday} />
+                <p className="text-orange-400 font-extrabold text-lg sm:text-xl tabular-nums">
+                  {streak >= 30
+                    ? "100 Days"
+                    : streak >= 7
+                      ? "30 Days"
+                      : "7 Days"}
                 </p>
-                <p className="text-gray-400 text-[10px] sm:text-xs font-semibold capitalize tracking-wider">
-                  logged today
+                <p className="text-gray-400 text-[10px] sm:text-xs font-semibold  tracking-wider">
+                  Next goal
                 </p>
               </div>
+
               <div className="w-px h-7 sm:h-8 bg-gray-800 shrink-0" />
+
               <div className="text-center px-1">
-                <p
-                  className={`font-extrabold text-lg sm:text-xl ${user?.freezeAvailable ? "text-blue-400" : "text-gray-600"}`}
-                >
-                  {user?.freezeAvailable ? "🧊" : "NONE"}
+                <p className="text-lg sm:text-xl">
+                  {user?.freezeAvailable ? "🧊" : "🔒"}
                 </p>
                 <p className="text-gray-400 text-[10px] sm:text-xs font-semibold capitalize tracking-wider">
-                  {user?.freezeAvailable ? "freeze ready" : "no freeze"}
+                  {user?.freezeAvailable ? "freeze ready" : "freeze locked"}
                 </p>
               </div>
             </div>
@@ -425,44 +432,43 @@ export default function Dashboard() {
           {/* RIGHT COLUMN — 2/5 */}
           <div className="lg:col-span-2 space-y-6">
             {/* Achievement card */}
-            {/* Achievement card */}
-           {/* Achievement card */}
-<div className="rounded-3xl border border-gray-800 bg-gray-900/80 p-5 sm:p-6 shadow-xl">
-  <div className="mb-4 flex items-center justify-between">
-    <div>
-      <h2 className="text-white font-bold text-lg flex items-center gap-2">
-        <FiAward className="text-orange-400" size={19} />
-        <span>Achievement Card</span>
-      </h2>
-      <p className="text-gray-400 text-xs mt-0.5">
-        Share your daily win on socials
-      </p>
-    </div>
-  </div>
 
-  {/* Compact Card Container — Removed extra inner padding */}
-  <div className="w-full flex justify-center items-center bg-gray-950/60 border border-gray-800/60 rounded-2xl p-2 sm:p-3">
-    <div className="w-full max-w-[280px] sm:max-w-[310px] rounded-[22px] overflow-hidden shadow-2xl ring-1 ring-orange-500/20">
-      <StreakCard
-        ref={cardRef}
-        user={user}
-        logs={logs}
-        recentLog={recentLog}
-      />
-    </div>
-  </div>
+            <div className="rounded-3xl border border-gray-800 bg-gray-900/80 p-5 sm:p-6 shadow-xl">
+              <div className="mb-4 flex items-center justify-between">
+                <div>
+                  <h2 className="text-white font-bold text-lg flex items-center gap-2">
+                    <FiAward className="text-orange-400" size={19} />
+                    <span>Achievement Card</span>
+                  </h2>
+                  <p className="text-gray-400 text-xs mt-0.5">
+                    Share your daily win on socials
+                  </p>
+                </div>
+              </div>
 
-  <button
-    onClick={handleDownloadCard}
-    disabled={exporting}
-    className="w-full mt-4 inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-400 disabled:opacity-40 text-white font-bold py-3.5 rounded-2xl transition-all duration-300 text-sm shadow-md shadow-orange-500/20 active:scale-[0.98]"
-  >
-    <FiDownload size={17} />
-    <span>
-      {exporting ? "Generating..." : "Download Share Card"}
-    </span>
-  </button>
-</div>
+              {/* Compact Card Container — Removed extra inner padding */}
+              <div className="w-full flex justify-center items-center bg-gray-950/60 border border-gray-800/60 rounded-2xl p-2 sm:p-3">
+                <div className="w-full max-w-[280px] sm:max-w-[310px] rounded-[22px] overflow-hidden shadow-2xl ring-1 ring-orange-500/20">
+                  <StreakCard
+                    ref={cardRef}
+                    user={user}
+                    logs={logs}
+                    recentLog={recentLog}
+                  />
+                </div>
+              </div>
+
+              <button
+                onClick={handleDownloadCard}
+                disabled={exporting}
+                className="w-full mt-4 inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-400 disabled:opacity-40 text-white font-bold py-3.5 rounded-2xl transition-all duration-300 text-sm shadow-md shadow-orange-500/20 active:scale-[0.98]"
+              >
+                <FiDownload size={17} />
+                <span>
+                  {exporting ? "Generating..." : "Download Share Card"}
+                </span>
+              </button>
+            </div>
 
             {/* Quick actions */}
             <div className="rounded-3xl border border-gray-800 bg-gray-900/80 p-6 shadow-xl">
