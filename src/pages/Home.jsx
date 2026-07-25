@@ -1,13 +1,12 @@
-import Navbar from "../components/landing/Navbar";
+import Navbar from "../components/layout/Navbar";
 import Hero from "../components/landing/Hero";
 import WhySection from "../components/landing/WhySection";
 import HowItWorks from "../components/landing/HowItWorks";
 import Features from "../components/landing/Features";
-import DashboardPreview from "../components/landing/DashboardPreview";
 import Manifesto from "../components/landing/Manifesto";
 import FAQ from "../components/landing/FAQ";
 import CTA from "../components/landing/CTA";
-import Footer from "../components/landing/Footer";
+import Footer from "../components/layout/Footer";
 
 export default function Landing() {
   return (
@@ -17,7 +16,6 @@ export default function Landing() {
       <WhySection />
       <HowItWorks />
       <Features />
-      {/* <DashboardPreview /> */}
       <Manifesto />
       <FAQ />
       <CTA />

@@ -2,6 +2,7 @@
 <html lang="en" class="dark">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     
     <!-- Inline SVG Favicon (FiZap Lightning Bolt) -->
     <link 
@@ -9,8 +10,6 @@
       type="image/svg+xml" 
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'></polygon></svg>" 
     />
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     
     <!-- Mobile Browser Navigation Bar Color (DevStreak Orange) -->
     <meta name="theme-color" content="#f97316" />
@@ -21,14 +20,12 @@
       content="DevStreak - Track your daily developer habits, keep your streak alive, and build unstoppable momentum."
     />
     
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-
-    <!-- Default Fallback Title (No em-dash) -->
     <title>DevStreak | Track Daily Developer Streaks</title>
   </head>
+
   <body class="bg-gray-950 text-gray-100 antialiased">
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -1,7 +1,10 @@
 import axios from "axios";
+import toast from "react-hot-toast";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || "http://localhost:5000/api",
+  baseURL: API_URL,
   withCredentials: true,
 });
 
@@ -16,14 +19,34 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Auto-refresh expired access token (NOT for auth endpoints)
+// Response Interceptor: Handles Token Refresh, 500s, and Network Errors
 api.interceptors.response.use(
   (response) => response,
   async (err) => {
     const original = err.config;
+    const isDev = import.meta.env.DEV;
 
-    // Never try to refresh for authentication endpoints.
-    // Let Login.js / Signup.js handle these errors themselves.
+    // 1. Handle Network / Connection Offline Errors
+    if (!err.response) {
+      toast.error(
+        isDev
+          ? "Network error: Backend server is offline (check local port)."
+          : "Unable to connect to DevStreak. Please check your internet connection."
+      );
+      return Promise.reject(err);
+    }
+
+    // 2. Handle Server Errors (500+)
+    if (err.response.status >= 500) {
+      toast.error(
+        isDev
+          ? `Server Error (${err.response.status}): ${err.response.data?.message || "Check server logs."}`
+          : "Server error occurred. Please try again later."
+      );
+      return Promise.reject(err);
+    }
+
+    // 3. Skip auto-refresh for explicit auth endpoints
     if (
       original?.url?.includes("/auth/login") ||
       original?.url?.includes("/auth/signup") ||
@@ -32,7 +55,8 @@ api.interceptors.response.use(
       return Promise.reject(err);
     }
 
-    if (err.response?.status === 401 && !original._retry) {
+    // 4. Token Refresh Logic (401)
+    if (err.response.status === 401 && !original._retry) {
       original._retry = true;
 
       try {
@@ -42,24 +66,24 @@ api.interceptors.response.use(
           throw new Error("No refresh token");
         }
 
-        const { data } = await axios.post(
-          `${process.env.REACT_APP_API_URL || "http://localhost:5000/api"}/auth/refresh`,
-          { refreshToken }
-        );
+        // Re-use API_URL defined at the top of the file
+        const { data } = await axios.post(`${API_URL}/auth/refresh`, {
+          refreshToken,
+        });
 
         localStorage.setItem("token", data.token);
-
         original.headers.Authorization = `Bearer ${data.token}`;
 
         return api(original);
-      } catch {
+      } catch (refreshErr) {
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
 
-        // Only redirect if we're not already on the login page
         if (window.location.pathname !== "/login") {
           window.location.href = "/login";
         }
+
+        return Promise.reject(refreshErr);
       }
     }
 

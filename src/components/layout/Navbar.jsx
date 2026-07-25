@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { FiZap, FiUser, FiLogOut, FiLayout, FiMenu, FiX, FiDownload } from "react-icons/fi";
+import {
+  FiZap,
+  FiUser,
+  FiLogOut,
+  FiLayout,
+  FiMenu,
+  FiX,
+  FiDownload,
+} from "react-icons/fi";
 import { useAuth } from "../../context/AuthContext";
 import ExtensionSetupModal from "../landing/ExtensionSetupModal";
 
@@ -11,8 +19,13 @@ export function DashboardBanner() {
     <>
       <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
-          <h3 className="text-base font-bold text-white">Automate your streak tracking</h3>
-          <p className="text-sm text-gray-400">Install our Chrome extension to log activity without leaving your tab.</p>
+          <h3 className="text-base font-bold text-white">
+            Automate your streak tracking
+          </h3>
+          <p className="text-sm text-gray-400">
+            Install our Chrome extension to log activity without leaving your
+            tab.
+          </p>
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
@@ -37,12 +50,17 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isExtensionModalOpen, setIsExtensionModalOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    setIsOpen(false);
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch (err) {
+      console.error("Logout error:", err);
+    } finally {
+      logout();
+      setIsOpen(false);
+      navigate("/login");
+    }
   };
-
   const isOnDashboard = location.pathname === "/dashboard";
 
   return (
@@ -50,8 +68,8 @@ export default function Navbar() {
       <nav className="sticky top-0 z-50 border-b border-gray-800/80 bg-gray-950/80 backdrop-blur-md px-4 sm:px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Brand Logo */}
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-3 text-xl font-black tracking-tight text-white group"
           >

@@ -19,8 +19,8 @@ import {
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import Heatmap from "../components/dashboard/Heatmap";
-import StreakCard from "../components/card/StreakCard";
-import Navbar from "../components/landing/Navbar";
+import StreakCard from "../components/dashboard/StreakCard";
+import Navbar from "../components/layout/Navbar";
 
 function getHoursLeftPKT() {
   const now = new Date();
@@ -141,7 +141,7 @@ export default function Dashboard() {
     setExporting(true);
     try {
       cardRef.current.download(`devstreak-day-${streak}.png`);
-      toast.success("Card downloaded — share it and inspire someone 🔥");
+      toast.success("Card downloaded - share it and inspire someone 🔥");
     } catch {
       toast.error("Export failed");
     } finally {
@@ -159,19 +159,55 @@ export default function Dashboard() {
     );
   }
 
-  const getRankLabel = (n) => {
-    if (n >= 365) return "LEGENDARY";
-    if (n >= 100) return "ELITE";
-    if (n >= 30) return "CONSISTENT";
-    if (n >= 7) return "RISING";
-    return "STARTED";
+  const getRankDetails = (n) => {
+    if (n <= 0)
+      return {
+        label: "UNRANKED",
+        emoji: "🌱",
+        color:
+          "border-gray-700/50 text-gray-400 bg-gray-800/40 shadow-[0_0_10px_rgba(156,163,175,0.1)]",
+      };
+    if (n >= 365)
+      return {
+        label: "LEGENDARY",
+        emoji: "👑",
+        color:
+          "border-yellow-500/50 text-yellow-300 bg-yellow-500/20 shadow-[0_0_16px_rgba(234,179,8,0.35)]",
+      };
+    if (n >= 100)
+      return {
+        label: "ELITE",
+        emoji: "⚡",
+        color:
+          "border-purple-500/50 text-purple-300 bg-purple-500/20 shadow-[0_0_14px_rgba(168,85,247,0.3)]",
+      };
+    if (n >= 30)
+      return {
+        label: "CONSISTENT",
+        emoji: "💥",
+        color:
+          "border-amber-500/50 text-amber-300 bg-amber-500/20 shadow-[0_0_12px_rgba(245,158,11,0.25)]",
+      };
+    if (n >= 7)
+      return {
+        label: "RISING",
+        emoji: "🔥",
+        color:
+          "border-orange-500/50 text-orange-300 bg-orange-500/20 shadow-[0_0_12px_rgba(249,115,22,0.25)]",
+      };
+    return {
+      label: "STARTED",
+      emoji: "✨",
+      color:
+        "border-blue-500/50 text-blue-300 bg-blue-500/20 shadow-[0_0_10px_rgba(59,130,246,0.2)]",
+    };
   };
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       <Navbar />
 
-      {/* ── HERO ── */}
+      {/* - HERO - */}
       <div className="relative overflow-hidden border-b border-orange-500/15 bg-gradient-to-b from-gray-950 via-gray-950 to-gray-900/60 py-8 sm:py-12 lg:py-16">
         {/* Ambient fire aura glow */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -228,9 +264,16 @@ export default function Dashboard() {
                       ? "Day 1 on fire! Keep burning."
                       : `Day ${streak}. Unstoppable energy.`}
                 </span>
-                <span className="text-[10px] xs:text-[11px] sm:text-xs font-bold text-amber-300 bg-orange-500/20 border border-orange-500/40 px-2.5 py-0.5 xs:px-3 xs:py-1 sm:px-3.5 sm:py-1.5 rounded-full uppercase tracking-wider shadow-[0_0_12px_rgba(249,115,22,0.25)] whitespace-nowrap">
-                  🔥 {getRankLabel(streak)}
-                </span>
+                {(() => {
+                  const { label, emoji, color } = getRankDetails(streak);
+                  return (
+                    <span
+                      className={`text-[10px] xs:text-[11px] sm:text-xs font-bold px-2.5 py-0.5 xs:px-3 xs:py-1 sm:px-3.5 sm:py-1.5 rounded-full uppercase tracking-wider border whitespace-nowrap transition-all ${color}`}
+                    >
+                      {emoji} {label}
+                    </span>
+                  );
+                })()}
               </div>
             </div>
           </div>
@@ -270,7 +313,7 @@ export default function Dashboard() {
 
               <div className="w-px h-7 sm:h-8 bg-gray-800 shrink-0" />
 
-              {/* Next Goal — Styled to match adjacent items */}
+              {/* Next Goal - Styled to match adjacent items */}
               <div className="text-center px-1">
                 <p className="text-orange-400 font-extrabold text-lg sm:text-xl tabular-nums">
                   {streak >= 30
@@ -299,10 +342,10 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── BODY ── */}
+      {/*  BODY - */}
       <div className="max-w-7xl mx-auto px-6 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          {/* LEFT COLUMN — 3/5 */}
+          {/* LEFT COLUMN - 3/5 */}
           <div className="lg:col-span-3 space-y-6">
             {/* Mission card */}
             {!loggedToday && todayStatus?.prompt && (
@@ -429,7 +472,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN — 2/5 */}
+          {/* RIGHT COLUMN - 2/5 */}
           <div className="lg:col-span-2 space-y-6">
             {/* Achievement card */}
 
@@ -446,7 +489,7 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Compact Card Container — Removed extra inner padding */}
+              {/* Compact Card Container - Removed extra inner padding */}
               <div className="w-full flex justify-center items-center bg-gray-950/60 border border-gray-800/60 rounded-2xl p-2 sm:p-3">
                 <div className="w-full max-w-[280px] sm:max-w-[310px] rounded-[22px] overflow-hidden shadow-2xl ring-1 ring-orange-500/20">
                   <StreakCard

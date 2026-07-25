@@ -3,8 +3,8 @@ import { Link, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
-import Navbar from "../components/landing/Navbar";
-import Footer from "../components/landing/Footer";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 
 const DOMAINS = [
   "MERN Stack Developer",
@@ -20,7 +20,7 @@ const DOMAINS = [
 
 export default function Signup() {
   const { login, user } = useAuth();
-  
+
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -46,7 +46,7 @@ export default function Signup() {
     setLoading(true);
     try {
       const { data } = await api.post("/auth/signup", form);
-      login(data.user, data.token, data.refreshToken);
+      login(data.user, data.token);
       toast.success(`Welcome, ${data.user.name}! Your streak starts today 🔥`);
     } catch (err) {
       toast.error(err.response?.data?.message || "Signup failed");
@@ -85,7 +85,7 @@ export default function Signup() {
                 name="name"
                 value={form.name}
                 onChange={handleChange}
-                placeholder="Saad Muhammad"
+                placeholder="Your full name"
                 className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition-colors"
               />
             </div>

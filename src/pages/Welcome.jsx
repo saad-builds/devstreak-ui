@@ -2,8 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-console.log("WELCOME COMPONENT LOADED");
-
 const QUOTES = [
   {
     text: "The secret of getting ahead is getting started.",
@@ -272,7 +270,7 @@ export default function Welcome() {
               </p>
 
               <p className="text-gray-600 text-sm">
-                — {quote.author}
+                - {quote.author}
               </p>
             </>
           )}

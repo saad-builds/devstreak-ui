@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import { useAuth } from "../context/AuthContext";
-import Navbar from "../components/landing/Navbar";
-import Footer from "../components/landing/Footer";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 
 export default function Login() {
   const { login, user } = useAuth();
@@ -48,11 +48,7 @@ export default function Login() {
       // 1. Set one-time session key BEFORE logging in / navigating
       sessionStorage.setItem("justLoggedIn", "true");
 
-      login(
-        response.data.user,
-        response.data.token,
-        response.data.refreshToken,
-      );
+     login(response.data.user, response.data.token);
 
       // 2. Navigate to /welcome
       navigate("/welcome", { replace: true });
