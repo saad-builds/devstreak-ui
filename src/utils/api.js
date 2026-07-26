@@ -1,14 +1,15 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 
+// 1. Properly pull Vite's environment variable
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000",
-  withCredentials: true, // <-- CRITICAL for HttpOnly cookies
+  baseURL: API_URL, // Uses VITE_API_URL (e.g. https://devstreak-backend.vercel.app/api)
+  withCredentials: true, // Crucial for HttpOnly cookies
 });
 
-// Attach token to every request
+// Attach access token to every request header
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
 
@@ -55,21 +56,17 @@ api.interceptors.response.use(
       return Promise.reject(err);
     }
 
-    // 4. Token Refresh Logic (401)
+    // 4. Token Refresh Logic (401) using HttpOnly Cookie
     if (err.response.status === 401 && !original._retry) {
       original._retry = true;
 
       try {
-        const refreshToken = localStorage.getItem("refreshToken");
-
-        if (!refreshToken) {
-          throw new Error("No refresh token");
-        }
-
-        // Re-use API_URL defined at the top of the file
-        const { data } = await axios.post(`${API_URL}/auth/refresh`, {
-          refreshToken,
-        });
+        // Send post request withCredentials so browser automatically attaches the HttpOnly cookie
+        const { data } = await axios.post(
+          `${API_URL}/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
 
         localStorage.setItem("token", data.token);
         original.headers.Authorization = `Bearer ${data.token}`;
@@ -77,7 +74,6 @@ api.interceptors.response.use(
         return api(original);
       } catch (refreshErr) {
         localStorage.removeItem("token");
-        localStorage.removeItem("refreshToken");
 
         if (window.location.pathname !== "/login") {
           window.location.href = "/login";
