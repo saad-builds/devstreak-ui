@@ -11,6 +11,7 @@ import {
 } from "react-icons/fi";
 import { useAuth } from "../../context/AuthContext";
 import ExtensionSetupModal from "../landing/ExtensionSetupModal";
+import api from "../../utils/api";
 
 export function DashboardBanner() {
   const [isModalOpen, setIsModalOpen] = useState(false);
