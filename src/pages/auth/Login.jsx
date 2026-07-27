@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../utils/api";
-import { useAuth } from "../context/AuthContext";
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
+import api from "../../utils/api";
+import { useAuth } from "../../context/AuthContext";
+import Navbar from "../../components/layout/Navbar";
+import Footer from "../../components/layout/Footer";
 
 export default function Login() {
   const { login, user } = useAuth();
@@ -48,7 +48,7 @@ export default function Login() {
       // 1. Set one-time session key BEFORE logging in / navigating
       sessionStorage.setItem("justLoggedIn", "true");
 
-     login(response.data.user, response.data.token);
+      login(response.data.user, response.data.token);
 
       // 2. Navigate to /welcome
       navigate("/welcome", { replace: true });
@@ -130,7 +130,14 @@ export default function Login() {
               {loading ? "Logging in..." : "Log In"}
             </button>
           </form>
-
+          <div className="mt-6 flex justify-between items-center text-sm text-gray-400">
+            <Link
+              to="/forgot-password"
+              className="hover:text-white transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
           <p className="text-center text-gray-500 mt-6 text-sm">
             No account?{" "}
             <Link

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import api from "../utils/api";
-import { useAuth } from "../context/AuthContext";
-import Navbar from "../components/layout/Navbar";
-import Footer from "../components/layout/Footer";
+import api from "../../utils/api";
+import { useAuth } from "../../context/AuthContext";
+import Navbar from "../../components/layout/Navbar";
+import Footer from "../../components/layout/Footer";
 
 const DOMAINS = [
   "MERN Stack Developer",

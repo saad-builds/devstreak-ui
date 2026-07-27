@@ -1,8 +1,16 @@
 /* global chrome */
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import api from "../utils/api";
 
 const EXTENSION_ID = "pblljelmjikhiiafpldhciighgnjaddm";
+const API_URL = import.meta.env.VITE_API_URL;
+const APP_URL = window.location.origin;
 
 const AuthContext = createContext(null);
 
@@ -35,12 +43,25 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem("token", token);
 
     // Notify Chrome extension
-    if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.sendMessage) {
-      chrome.runtime.sendMessage(EXTENSION_ID, { type: "SET_TOKEN", token }, () => {
-        if (chrome.runtime.lastError) {
-          // Extension inactive or not installed — ignore
-        }
-      });
+    if (
+      typeof chrome !== "undefined" &&
+      chrome.runtime &&
+      chrome.runtime.sendMessage
+    ) {
+      chrome.runtime.sendMessage(
+        EXTENSION_ID,
+        {
+          type: "SET_TOKEN",
+          token,
+          apiUrl: API_URL,
+          appUrl: APP_URL,
+        },
+        () => {
+          if (chrome.runtime.lastError) {
+            // Ignore if extension isn't installed
+          }
+        },
+      );
     }
   }, []);
 
@@ -51,7 +72,11 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
 
     // Notify Chrome extension on logout
-    if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.sendMessage) {
+    if (
+      typeof chrome !== "undefined" &&
+      chrome.runtime &&
+      chrome.runtime.sendMessage
+    ) {
       chrome.runtime.sendMessage(EXTENSION_ID, { type: "LOGOUT" }, () => {
         if (chrome.runtime.lastError) {
           // Extension inactive or not installed — ignore
