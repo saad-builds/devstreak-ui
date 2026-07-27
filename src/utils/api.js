@@ -2,7 +2,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 // 1. Properly pull Vite's environment variable
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_URL = import.meta.env.VITE_API_URL;
+console.log("API_URL =", API_URL);
 
 const api = axios.create({
   baseURL: API_URL, // Uses VITE_API_URL (e.g. https://devstreak-backend.vercel.app/api)
