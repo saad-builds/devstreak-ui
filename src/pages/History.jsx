@@ -3,6 +3,8 @@ import toast from "react-hot-toast";
 import api from "../utils/api";
 import Navbar from "../components/layout/Navbar";
 import { formatDate } from "../utils/dates";
+import { FiZap } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 const RATINGS = ["", "😞", "😐", "🙂", "😊", "🔥"];
 const ITEMS_PER_PAGE = 10;
@@ -199,12 +201,49 @@ export default function History() {
         </div>
 
         {/* Empty State */}
-        {filteredLogs.length === 0 && (
-          <div className="text-center py-16 text-gray-600 bg-gray-900/40 rounded-xl border border-gray-800/80">
-            <p className="text-4xl mb-3">📓</p>
-            <p className="text-gray-400 font-medium">
-              No logs match your filter criteria.
+        {/* First Time User */}
+        {logs.length === 0 && (
+          <div className="text-center py-16 bg-gray-900/40 rounded-xl border border-gray-800/80">
+            <FiZap className="mx-auto text-orange-400 text-5xl mb-3" />
+
+            <h3 className="text-lg font-semibold text-white mb-2">
+              Start your first streak
+            </h3>
+
+            <p className="text-gray-400 mb-6">
+              You haven't logged any activity yet. Check in today to begin your
+              DevStreak.
             </p>
+
+            <Link
+              to="/checkin"
+              className="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-400 text-white font-bold px-5 py-3 rounded-xl transition-all duration-300 shadow-md shadow-orange-500/20"
+            >
+              <FiZap />
+              <span>Log Today's Entry</span>
+            </Link>
+          </div>
+        )}
+
+        {/* Filters returned nothing */}
+        {logs.length > 0 && filteredLogs.length === 0 && (
+          <div className="text-center py-16 bg-gray-900/40 rounded-xl border border-gray-800/80">
+            <FiZap className="mx-auto text-orange-400 text-5xl mb-3 opacity-70" />
+
+            <h3 className="text-lg font-semibold text-white mb-2">
+              No matching logs
+            </h3>
+
+            <p className="text-gray-400 mb-6">
+              No logs match your current search or filter settings.
+            </p>
+
+            <button
+              onClick={clearFilters}
+              className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white font-semibold px-5 py-3 rounded-xl transition-all"
+            >
+              Reset Filters
+            </button>
           </div>
         )}
 

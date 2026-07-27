@@ -129,8 +129,7 @@ export default function Login() {
             >
               {loading ? "Logging in..." : "Log In"}
             </button>
-          </form>
-          <div className="mt-6 flex justify-between items-center text-sm text-gray-400">
+            <div className="mt-6 flex justify-between items-center text-sm text-gray-400">
             <Link
               to="/forgot-password"
               className="hover:text-white transition-colors"
@@ -138,6 +137,8 @@ export default function Login() {
               Forgot password?
             </Link>
           </div>
+          </form>
+          
           <p className="text-center text-gray-500 mt-6 text-sm">
             No account?{" "}
             <Link

@@ -5,14 +5,43 @@ import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/layout/Navbar";
 
 const DOMAINS = [
+  // Web
   "MERN Stack Developer",
   "Frontend Developer",
   "Backend Developer",
+  "Full Stack Developer",
+
+  // Mobile & Desktop
   "Mobile Developer",
+  "Desktop Application Developer",
+
+  // Infrastructure
   "DevOps Engineer",
-  "Data / ML Engineer",
+  "Cloud Engineer",
+  "Site Reliability Engineer (SRE)",
+
+  // Data & AI
+  "Data Engineer",
+  "Data Scientist",
+  "Machine Learning Engineer",
+  "AI Engineer",
+
+  // Security
   "Cybersecurity",
+
+  // Specialized
+  "Blockchain Developer",
+  "Embedded Systems Engineer",
+  "IoT Developer",
   "Game Developer",
+
+  // General
+  "Software Engineer",
+  "QA / Test Automation",
+  "UI/UX Designer",
+  "Product Manager",
+  "Technical Writer",
+  "Student",
   "Other",
 ];
 
