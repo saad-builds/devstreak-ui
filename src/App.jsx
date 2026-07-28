@@ -21,7 +21,7 @@ import NotFound from "./pages/NotFound";
 import Profile from "./pages/Profile";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
-
+import ExtensionSetup from "./components/landing/ExtensionSetup";
 // Helper component to update document title dynamically based on current route
 function TitleUpdater() {
   const location = useLocation();
@@ -63,6 +63,7 @@ export default function App() {
         />
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path="/extension-guide" element={<ExtensionSetup />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route
