@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { FiZap, FiGithub, FiLinkedin, FiTwitter } from "react-icons/fi";
+import { SiX } from "react-icons/si";
 
 export default function Footer() {
   return (
@@ -109,7 +110,7 @@ export default function Footer() {
               className="w-9 h-9 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center text-gray-400 hover:text-orange-400 hover:border-orange-500/40 transition-all"
               aria-label="X (Twitter)"
             >
-              <FiTwitter size={18} />
+              <SiX size={16} />
             </a>
           </div>
         </div>
